@@ -1,0 +1,178 @@
+<div class="container">
+  <div class="row">
+    <!-- <div class="displayBlockMobile" style="position:fixed;width:100%;z-index:1;">
+      <div class="col-sm-12 p-0">
+
+        <nav class="navbar navbar-expand-md navbar-fixed navbar-dark bg-dark">
+
+          <a class="navbar-brand text-white">
+            {{userInfo.firstName}} {{userInfo.lastName}}
+            <i class="fa fa-circle online" *ngIf="disconnectedSocket == false"></i>
+            <i class="fa fa-circle offline" *ngIf="disconnectedSocket == true"></i>
+          </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse people-list navbar-collapse" id="navbarSupportedContent">
+            <ul class="list">
+              <li class="p-2 typeOfChats">
+                Online Users:
+              </li>
+              <li class="clearfix cursorPointer" [ngClass]="{'activeChat': user.chatting == true}" (click)="userSelectedToChat(user.userId, user.name)"
+                *ngFor="let user of userList">
+                <div class="userPresence" *ngIf="user.userId != userInfo.userId">
+                  <user-details [userFirstName]="user.name" [userLastName]="''" [userStatus]="'online'" [messageRead]="user.unread"></user-details>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+
+        </nav>
+
+      </div>
+
+    </div> -->
+
+    <div class="col-12 displayNoneMobile col-sm-4 col-md-4 people-list p-0" id="people-list">
+
+      <div class="p-3 text-white textCapitalize textCenter">
+        {{userInfo.firstName}} {{userInfo.lastName}}
+        <i class="fa fa-circle online" *ngIf="disconnectedSocket == false"></i>
+        <i class="fa fa-circle offline" *ngIf="disconnectedSocket == true"></i>
+        <br>
+        <br>
+        <button (click)="logout()" class="btn btn-info customButton">Logout</button>
+        <br/>
+        <br/>
+        <button class="btn btn-info customButton" type="button" data-toggle="modal" data-target="#exampleModal">Create Room</button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" style="color:black;" id="exampleModalLabel">Create Room</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <input type="text" id="chatRoomTitle" class="form-control" [(ngModel)]="roomTitle" placeholder="Title" required>
+                <br>
+                <input type="text" id="chatRoomDescription" class="form-control" [(ngModel)]="roomDescription" placeholder="description"
+                  required>
+                <br>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" (click)="createRoom()">Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal end-->
+      </div>
+
+      <ul class="list">
+        <li class="p-2 typeOfChats">
+          Chat Rooms:
+        </li>
+        <li class="clearfix cursorPointer" *ngFor="let chat of chatRoomList" (click)="chatRoomSelectedToChat(chat.chatRoomId, chat.title)">
+          <div class="userPresence">
+            <user-details [userFirstName]="chat.title" [userLastName]="''" [userStatus]="chat.isActive" [messageRead]="''"></user-details>
+          </div>
+        </li>
+
+      </ul>
+
+
+    </div>
+
+    <div class="col-12 col-sm-8 col-md-8 chat">
+      <div class="chat-header clearfix mobileMenu" *ngIf="roomTitle">
+        <first-char [name]="roomTitle" [userBg]="'blue'" [userColor]="'white'"></first-char>
+        <div class="chat-about">
+          <div class="chat-with">Chat in room {{roomTitle}}
+            <br/>
+                  <span *ngIf="typingName">
+                    <div style="font-size: 0.5em">
+                      {{typingName}} is typing....
+                    </div>
+                  </span>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="color:black;" id="exampleModalLabel">edit Room</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input type="text" id="chatRoomTitle" class="form-control" [(ngModel)]="roomTitle" placeholder="Title" required>
+                  <br>
+                  <input type="text" id="chatRoomDescription" class="form-control" [(ngModel)]="roomDescription" placeholder="description"
+                    required>
+                  <br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="deleteRoom()">Close Room</button>
+                  <button type="button" class="btn btn-primary" (click)="editRoom()" data-dismiss="modal">Edit</button>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Modal end-->
+        </div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" style="float:right;" data-target="#exampleModal2">Edit Room</button>
+        <span >
+          <button type="button" class="btn btn-success" [ngClass]="{'btn-danger':userInfo.isIn}"
+          style="float:right;margin-right:1%" (click)="toggle()"> {{temp}} </button>
+        </span>
+      </div>
+      <!-- end chat-header -->
+      <div #scrollMe [scrollTop]="(scrollToChatTop)?0:scrollMe.scrollHeight" class="chat-history">
+        <ul>
+          <li class="textCenter" *ngIf="!roomTitle">
+            <span class="cursorPointer">Click on ChatRoom to chat</span>
+            <br>
+          </li>
+          <li class="textCenter" *ngIf="roomTitle">
+            <span class="cursorPointer" (click)="loadEarlierPageOfChat()">Load Previous Chat</span>
+            <br>
+            <span *ngIf="loadingPreviousChat == true">Loading...</span>
+          </li>
+          <li class="clearfix" *ngFor="let message of messageList">
+            <div class="message-data" [ngClass]="{'align-right': message.senderId == userInfo.userId}">
+              <span class="message-data-time">{{message.createdOn | date: 'medium' }}</span> &nbsp; &nbsp;
+              <span class="message-data-name floatLeft" *ngIf="message.senderId != userInfo.userId">
+                <i class="fa fa-circle online"></i> {{ message?.senderName }}</span>
+              <span class="message-data-name" *ngIf="message.senderId == userInfo.userId">{{ message?.senderName }}</span>
+              <i class="fa fa-circle me" *ngIf="message.senderId == userInfo.userId"></i>
+
+            </div>
+            <div class="message" [ngClass]="{'float-right other-message': message.senderId == userInfo.userId, 'my-message': message.senderId != userInfo.userId}">
+              {{message?.message | removeSpecialCharPipe: '#' | removeSpecialCharPipe: '$'}}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- end chat-history -->
+      <div class="chat-message clearfix p-2" *ngIf="receiverName">
+        <textarea name="message-to-send" style="height: 10vh" id="message-to-send" (keydown)="sendMessageUsingKeypress($event)" [(ngModel)]="messageText"
+          placeholder="Type your message" rows="3"></textarea>
+        <button (click)="sendMessage()">Send</button>
+      </div>
+      <!-- end chat-message -->
+    </div>
+  </div>
+  <!-- end chat -->
+</div>
+<!-- end container -->
